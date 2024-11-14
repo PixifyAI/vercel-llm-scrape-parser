@@ -1,7 +1,7 @@
 import { displayDirectoryStructure, getSelectedFiles, formatRepoContents } from './utils.js';
 
 // Event listener for form submission
-document.getElementById('repoForm').addEventListener('submit', async function(e) {
+document.getElementById('repoForm').addEventListener('submit', async function (e) {
     e.preventDefault();
     const repoUrl = document.getElementById('repoUrl').value;
     const accessToken = document.getElementById('accessToken').value;
@@ -10,6 +10,7 @@ document.getElementById('repoForm').addEventListener('submit', async function(e)
     outputText.value = '';
 
     try {
+        // Parse repository URL and fetch repository contents
         const { owner, repo, lastString } = parseRepoUrl(repoUrl);
         let refFromUrl = '';
         let pathFromUrl = '';
@@ -17,6 +18,7 @@ document.getElementById('repoForm').addEventListener('submit', async function(e)
         if (lastString) {
             const references = await getReferences(owner, repo, accessToken);
             const allRefs = [...references.branches, ...references.tags];
+            
             const matchingRef = allRefs.find(ref => lastString.startsWith(ref));
             if (matchingRef) {
                 refFromUrl = matchingRef;
@@ -43,7 +45,7 @@ document.getElementById('repoForm').addEventListener('submit', async function(e)
 });
 
 // Event listener for generating text file
-document.getElementById('generateTextButton').addEventListener('click', async function() {
+document.getElementById('generateTextButton').addEventListener('click', async function () {
     const accessToken = document.getElementById('accessToken').value;
     const outputText = document.getElementById('outputText');
     outputText.value = '';
@@ -70,7 +72,7 @@ document.getElementById('generateTextButton').addEventListener('click', async fu
 });
 
 // Event listener for downloading zip file
-document.getElementById('downloadZipButton').addEventListener('click', async function() {
+document.getElementById('downloadZipButton').addEventListener('click', async function () {
     const accessToken = document.getElementById('accessToken').value;
 
     try {
@@ -92,7 +94,7 @@ document.getElementById('downloadZipButton').addEventListener('click', async fun
 });
 
 // Event listener for copying text to clipboard
-document.getElementById('copyButton').addEventListener('click', function() {
+document.getElementById('copyButton').addEventListener('click', function () {
     const outputText = document.getElementById('outputText');
     outputText.select();
     navigator.clipboard.writeText(outputText.value)
@@ -101,7 +103,7 @@ document.getElementById('copyButton').addEventListener('click', function() {
 });
 
 // Event listener for downloading text file
-document.getElementById('downloadButton').addEventListener('click', function() {
+document.getElementById('downloadButton').addEventListener('click', function () {
     const outputText = document.getElementById('outputText').value;
     if (!outputText.trim()) {
         document.getElementById('outputText').value = 'Error: No content to download. Please generate the text file first.';
@@ -223,31 +225,11 @@ async function fetchFileContents(files, token) {
     return contents;
 }
 
-// Create and download zip file
-async function createAndDownloadZip(fileContents) {
-    const zip = new JSZip();
-
-    fileContents.forEach(file => {
-        const filePath = file.path.startsWith('/') ? file.path.slice(1) : file.path;
-        zip.file(filePath, file.text);
-    });
-
-    const content = await zip.generateAsync({ type: "blob" });
-    const url = URL.createObjectURL(content);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'partial_repo.zip';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
-
 // Initialize Lucide icons and set up event listeners
 document.addEventListener('DOMContentLoaded', function() {
     lucide.createIcons();
     setupShowMoreInfoButton();
-    setupScrapeButton();
+    setupScrapeButton(); // Call setupScrapeButton after DOMContentLoaded
 });
 
 function setupShowMoreInfoButton() {
@@ -268,6 +250,27 @@ function updateInfoIcon(button, tokenInfo) {
     }
 }
 
+// Create and download zip file
+async function createAndDownloadZip(fileContents) {
+    const zip = new JSZip();
+
+    fileContents.forEach(file => {
+        // Remove leading slash if present
+        const filePath = file.path.startsWith('/') ? file.path.slice(1) : file.path;
+        zip.file(filePath, file.text);
+    });
+
+    const content = await zip.generateAsync({type: "blob"});
+    const url = URL.createObjectURL(content);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'partial_repo.zip';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
 // Event listener for scraping URL
 function setupScrapeButton() {
     const scrapeButton = document.getElementById('scrapeButton');
@@ -285,12 +288,11 @@ async function scrapeUrl() {
             throw new Error(`Failed to fetch URL: ${response.status} ${response.statusText}`);
         }
         const html = await response.text();
+        const $ = cheerio.load(html);
 
-        // Extract relevant data from the scraped HTML using DOM APIs
-        const paragraphs = document.querySelectorAll('p');
         let scrapedText = '';
-        paragraphs.forEach(paragraph => {
-            scrapedText += paragraph.textContent + '\n';
+        $('p').each((i, el) => {
+            scrapedText += $(el).text() + '\n';
         });
 
         outputText.value = scrapedText;
@@ -298,55 +300,3 @@ async function scrapeUrl() {
         outputText.value = `Error scraping URL: ${error.message}`;
     }
 }
-
-// Function to display directory structure
-function displayDirectoryStructure(tree) {
-    const directoryStructure = generateDirectoryStructure(tree);
-    const outputText = document.getElementById('directoryStructure');
-    outputText.innerHTML = directoryStructure;
-}
-
-// Function to generate directory structure recursively
-function generateDirectoryStructure(tree, indent = 0) {
-    let structure = '';
-    tree.forEach(item => {
-        const prefix = ' '.repeat(indent);
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.dataset.url = item.url;
-        checkbox.dataset.path = item.path;
-        if (item.type === 'tree') {
-            structure += `${prefix}- <label for="${item.path}">${item.path}/</label>\n`;
-            structure += generateDirectoryStructure(item.tree, indent + 2);
-        } else {
-            structure += `${prefix}- <label for="${item.path}">${item.path}</label>\n`;
-        }
-    });
-    return structure;
-}
-
-// Function to get selected files from the directory structure
-function getSelectedFiles() {
-    const selectedFiles = [];
-    const fileCheckboxes = document.querySelectorAll('input[type="checkbox"]');
-    fileCheckboxes.forEach(checkbox => {
-        if (checkbox.checked) {
-            selectedFiles.push({
-                url: checkbox.dataset.url,
-                path: checkbox.dataset.path
-            });
-        }
-    });
-    return selectedFiles;
-}
-
-// Function to format repository contents
-function formatRepoContents(fileContents) {
-    let formattedText = '';
-    fileContents.forEach(file => {
-        formattedText += `## ${file.path}\n\n`;
-        formattedText += `${file.text}\n\n`;
-    });
-    return formattedText;
-}
-
