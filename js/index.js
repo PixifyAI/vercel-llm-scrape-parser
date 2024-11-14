@@ -302,7 +302,7 @@ async function scrapeUrl() {
         }
 
         if (!$) {
-            throw new Error("Failed to load cheerio after multiple attempts.");
+            throw new Error("Failed to load cheerio after multiple attempt's.");
         }
 
         let scrapedText = '';
