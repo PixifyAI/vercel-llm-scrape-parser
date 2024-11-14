@@ -1,7 +1,7 @@
 import { displayDirectoryStructure, getSelectedFiles, formatRepoContents } from './utils.js';
 
 // Event listener for form submission
-document.getElementById('repoForm').addEventListener('submit', async function (e) {
+document.getElementById('repoForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const repoUrl = document.getElementById('repoUrl').value;
     const accessToken = document.getElementById('accessToken').value;
@@ -10,7 +10,6 @@ document.getElementById('repoForm').addEventListener('submit', async function (e
     outputText.value = '';
 
     try {
-        // Parse repository URL and fetch repository contents
         const { owner, repo, lastString } = parseRepoUrl(repoUrl);
         let refFromUrl = '';
         let pathFromUrl = '';
@@ -18,7 +17,6 @@ document.getElementById('repoForm').addEventListener('submit', async function (e
         if (lastString) {
             const references = await getReferences(owner, repo, accessToken);
             const allRefs = [...references.branches, ...references.tags];
-            
             const matchingRef = allRefs.find(ref => lastString.startsWith(ref));
             if (matchingRef) {
                 refFromUrl = matchingRef;
@@ -45,7 +43,7 @@ document.getElementById('repoForm').addEventListener('submit', async function (e
 });
 
 // Event listener for generating text file
-document.getElementById('generateTextButton').addEventListener('click', async function () {
+document.getElementById('generateTextButton').addEventListener('click', async function() {
     const accessToken = document.getElementById('accessToken').value;
     const outputText = document.getElementById('outputText');
     outputText.value = '';
@@ -72,7 +70,7 @@ document.getElementById('generateTextButton').addEventListener('click', async fu
 });
 
 // Event listener for downloading zip file
-document.getElementById('downloadZipButton').addEventListener('click', async function () {
+document.getElementById('downloadZipButton').addEventListener('click', async function() {
     const accessToken = document.getElementById('accessToken').value;
 
     try {
@@ -94,7 +92,7 @@ document.getElementById('downloadZipButton').addEventListener('click', async fun
 });
 
 // Event listener for copying text to clipboard
-document.getElementById('copyButton').addEventListener('click', function () {
+document.getElementById('copyButton').addEventListener('click', function() {
     const outputText = document.getElementById('outputText');
     outputText.select();
     navigator.clipboard.writeText(outputText.value)
@@ -103,7 +101,7 @@ document.getElementById('copyButton').addEventListener('click', function () {
 });
 
 // Event listener for downloading text file
-document.getElementById('downloadButton').addEventListener('click', function () {
+document.getElementById('downloadButton').addEventListener('click', function() {
     const outputText = document.getElementById('outputText').value;
     if (!outputText.trim()) {
         document.getElementById('outputText').value = 'Error: No content to download. Please generate the text file first.';
@@ -229,7 +227,7 @@ async function fetchFileContents(files, token) {
 document.addEventListener('DOMContentLoaded', function() {
     lucide.createIcons();
     setupShowMoreInfoButton();
-    setupScrapeButton(); // Call setupScrapeButton after DOMContentLoaded
+    setupScrapeButton();
 });
 
 function setupShowMoreInfoButton() {
@@ -255,12 +253,11 @@ async function createAndDownloadZip(fileContents) {
     const zip = new JSZip();
 
     fileContents.forEach(file => {
-        // Remove leading slash if present
         const filePath = file.path.startsWith('/') ? file.path.slice(1) : file.path;
         zip.file(filePath, file.text);
     });
 
-    const content = await zip.generateAsync({type: "blob"});
+    const content = await zip.generateAsync({ type: "blob" });
     const url = URL.createObjectURL(content);
     const a = document.createElement('a');
     a.href = url;
@@ -288,7 +285,25 @@ async function scrapeUrl() {
             throw new Error(`Failed to fetch URL: ${response.status} ${response.statusText}`);
         }
         const html = await response.text();
-        const $ = cheerio.load(html);
+
+        // Include cheerio dynamically and retry if not defined
+        let $;
+        let attempts = 0;
+        while (!$ && attempts < 5) {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/cheerio@1.0.0-rc.10/dist/cheerio.min.js';
+            document.head.appendChild(script);
+            await new Promise(resolve => script.onload = resolve);
+            $ = window.cheerio;
+            if (!$) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+            attempts++;
+        }
+
+        if (!$) {
+            throw new Error("Failed to load cheerio after multiple attempts.");
+        }
 
         let scrapedText = '';
         $('p').each((i, el) => {
