@@ -291,7 +291,7 @@ async function scrapeUrl() {
         let attempts = 0;
         while (!$ && attempts < 5) {
             const script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/cheerio/1.0.0-rc.12/cheerio.min.js'; // Updated CDN link
+            script.src = 'https://cdn.jsdelivr.net/npm/cheerio@1.0.0/dist/esm/index.min.js'; // Updated CDN link
             document.head.appendChild(script);
             await new Promise(resolve => script.onload = resolve);
             $ = window.cheerio;
