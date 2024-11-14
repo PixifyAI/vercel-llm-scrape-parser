@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Directory to Plain Text Converter | Convert Local Directories to Text</title>
+    <meta name="description" content="Convert local directories to plain text files easily. Our tool helps you transform local files into a single formatted text file for better readability and analysis.">
+    <meta name="keywords" content="local directory, code converter, plain text, file analysis">
+    <meta name="author" content="abinthomasonline">
+    <link rel="canonical" href="https://repo2txt.simplebasedomain.com/local.html">
+    <meta property="og:title" content="Local Directory to Plain Text Converter">
+    <meta property="og:description" content="Convert local directories to plain text files easily. Transform files into a single formatted text file.">
+    <meta property="og:url" content="https://repo2txt.simplebasedomain.com/local.html">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/lucide.min.js"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CYF86LN5WM"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-CYF86LN5WM');
+    </script>
+    <script src="js/jszip.min.js"></script>
+    <style>
+        .custom-file-button {
+            /* Styles for the custom button */
+            background-image: linear-gradient(to right, #4B0082, #0000FF); /* Gradient */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: background-color 0.3s ease; /* Smooth transition on hover */
+        }
+        .custom-file-button:hover {
+            background-image: linear-gradient(to right, #6A00A6, #0021FF); /* Slightly darker gradient on hover */
+        }
+        .custom-file-button input[type="file"] {
+            /* Hide the default input */
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-[#0a0a0a] min-h-screen p-4 md:p-8 text-gray-400">
+    <div class="max-w-4xl mx-auto bg-zinc-900 rounded-lg shadow-md p-6 relative">
+        <a href="https://github.com/abinthomasonline/repo2txt" target="_blank" class="absolute top-2 right-2">
+            <i data-lucide="github" class="w-8 h-8 text-gray-400 hover:text-gray-200"></i>
+        </a>
+        <h1 class="text-3xl font-bold mb-2 text-center bg-gradient-to-r from-[#4B0082] to-[#0000FF] bg-clip-text text-transparent">Local Directory to Plain Text</h1>
+        <p class="text-lg text-center text-gray-400 mb-6">Convert Local Directory to a Single Formatted Text File</p>
+        
+        <div class="mb-4">
+            <label for="directoryPicker" class="block text-sm font-medium text-gray-400">Select Directory:</label>
+            <div class="relative">
+                <button class="custom-file-button" type="button">Choose Directory</button>
+                <input type="file" id="directoryPicker" webkitdirectory directory multiple class="absolute inset-0 opacity-0">
+            </div>
+        </div>
+
+        <div>
+            <a href="/" class="bg-gradient-to-r from-[#4B0082] to-[#0000FF] bg-clip-text text-transparent underline text-gray-400">
+                Convert From GitHub Instead
+            </a>
+        </div>
+
+        <div id="extentionCheckboxes" class="mt-4"></div>
+        <div id="directoryStructure" class="mt-6"></div>
+
+        <button id="generateTextButton" class="bg-gradient-to-r from-[#4B0082] to-[#0000FF] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hidden flex items-center justify-center">
+            <i data-lucide="file-text" class="w-5 h-5 mr-2"></i>
+            Generate Text File
+        </button>
+
+        <textarea id="outputText" rows="20" class="mt-4 w-full p-2 border border-gray-600 rounded-md font-mono bg-[#262626] text-gray-400" readonly></textarea>
+
+        <div class="mt-4 flex space-x-4">
+            <button id="copyButton" class="flex-1 bg-gradient-to-r from-[#4B0082] to-[#0000FF] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hidden flex items-center justify-center">
+                <i data-lucide="copy" class="w-5 h-5 mr-2"></i>
+                Copy to Clipboard
+            </button>
+            <button id="downloadButton" class="flex-1 bg-gradient-to-r from-[#4B0082] to-[#0000FF] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hidden flex items-center justify-center">
+                <i data-lucide="download" class="w-5 h-5 mr-2"></i>
+                Download Text File
+            </button>
+        </div>
+    </div>
+    <footer class="mt-8 text-center text-sm text-gray-400">
+        <p>If you encounter any errors, please email <a href="mailto:abinthomasonline@gmail.com" class="bg-gradient-to-r from-[#4B0082] to-[#0000FF] bg-clip-text text-transparent">abinthomasonline@gmail.com</a> or <a href="https://github.com/abinthomasonline/repo2txt/issues" target="_blank" class="bg-gradient-to-r from-[#4B0082] to-[#0000FF] bg-clip-text text-transparent">raise a GitHub issue</a>.</p>
+    </footer>
+    <script type="module" src="js/local.js"></script>
+</body>
+</html>
