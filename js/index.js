@@ -229,6 +229,7 @@ async function fetchFileContents(files, token) {
 document.addEventListener('DOMContentLoaded', function() {
     lucide.createIcons();
     setupShowMoreInfoButton();
+    setupScrapeButton(); // Call setupScrapeButton after DOMContentLoaded
 });
 
 function setupShowMoreInfoButton() {
@@ -271,7 +272,12 @@ async function createAndDownloadZip(fileContents) {
 }
 
 // Event listener for scraping URL
-document.getElementById('scrapeButton').addEventListener('click', async function() {
+function setupScrapeButton() {
+    const scrapeButton = document.getElementById('scrapeButton');
+    scrapeButton.addEventListener('click', scrapeUrl);
+}
+
+async function scrapeUrl() {
     const scrapeUrl = document.getElementById('scrapeUrl').value;
     const outputText = document.getElementById('outputText');
     outputText.value = 'Scraping...';
@@ -284,8 +290,6 @@ document.getElementById('scrapeButton').addEventListener('click', async function
         const html = await response.text();
         const $ = cheerio.load(html);
 
-        // Extract relevant data from the scraped HTML using cheerio
-        // Example: Extract all paragraph text
         let scrapedText = '';
         $('p').each((i, el) => {
             scrapedText += $(el).text() + '\n';
@@ -295,4 +299,4 @@ document.getElementById('scrapeButton').addEventListener('click', async function
     } catch (error) {
         outputText.value = `Error scraping URL: ${error.message}`;
     }
-});
+}
