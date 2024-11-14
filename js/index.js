@@ -349,3 +349,4 @@ function formatRepoContents(fileContents) {
     });
     return formattedText;
 }
+
