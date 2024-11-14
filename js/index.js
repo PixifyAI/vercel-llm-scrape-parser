@@ -300,7 +300,6 @@ async function scrapeUrl() {
 }
 
 // Function to display directory structure
-function displayDirectoryStructure(tree) {
     const directoryStructure = generateDirectoryStructure(tree);
     const outputText = document.getElementById('directoryStructure');
     outputText.innerHTML = directoryStructure;
