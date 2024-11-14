@@ -25,6 +25,7 @@
         gtag('config', 'G-CYF86LN5WM');
     </script>
     <script src="js/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cheerio@1.0.0-rc.10/dist/cheerio.min.js"></script>
 </head>
 <body class="bg-[#0a0a0a] min-h-screen p-4 md:p-8 text-gray-400">
     <div class="max-w-4xl mx-auto bg-zinc-900 rounded-lg shadow-md p-6 relative">
@@ -52,6 +53,10 @@
                 <input type="text" id="accessToken" name="accessToken" class="mt-1 block w-full rounded-md border border-gray-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 h-10 px-2 bg-[#262626] text-gray-400">
             </div>
             <div>
+                <label for="scrapeUrl" class="block text-sm font-medium text-gray-400">URL to Scrape:</label>
+                <input type="text" id="scrapeUrl" name="scrapeUrl" class="mt-1 block w-full rounded-md border border-gray-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 h-10 px-2 bg-[#262626] text-gray-400">
+            </div>
+            <div>
                 <a href="/local.html" class="bg-gradient-to-r from-[#4B0082] to-[#0000FF] bg-clip-text text-transparent underline text-gray-400">
                     Convert From Local Directory Instead
                 </a>
@@ -59,6 +64,10 @@
             <button type="submit" class="bg-gradient-to-r from-[#4B0082] to-[#0000FF] text-gray-400 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center justify-center">
                 <i data-lucide="folder-search" class="w-5 h-5 mr-2"></i>
                 Fetch Directory Structure
+            </button>
+            <button type="button" id="scrapeButton" class="bg-gradient-to-r from-[#4B0082] to-[#0000FF] text-gray-400 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center justify-center">
+                <i data-lucide="search" class="w-5 h-5 mr-2"></i>
+                Scrape URL
             </button>
         </form>
         <div id="extentionCheckboxes"></div>

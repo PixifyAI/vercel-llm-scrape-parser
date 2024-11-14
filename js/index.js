@@ -269,3 +269,30 @@ async function createAndDownloadZip(fileContents) {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 }
+
+// Event listener for scraping URL
+document.getElementById('scrapeButton').addEventListener('click', async function() {
+    const scrapeUrl = document.getElementById('scrapeUrl').value;
+    const outputText = document.getElementById('outputText');
+    outputText.value = 'Scraping...';
+
+    try {
+        const response = await fetch(scrapeUrl);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch URL: ${response.status} ${response.statusText}`);
+        }
+        const html = await response.text();
+        const $ = cheerio.load(html);
+
+        // Extract relevant data from the scraped HTML using cheerio
+        // Example: Extract all paragraph text
+        let scrapedText = '';
+        $('p').each((i, el) => {
+            scrapedText += $(el).text() + '\n';
+        });
+
+        outputText.value = scrapedText;
+    } catch (error) {
+        outputText.value = `Error scraping URL: ${error.message}`;
+    }
+});
