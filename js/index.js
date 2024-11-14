@@ -301,11 +301,9 @@ async function scrapeUrl() {
 
 // Function to display directory structure
 function displayDirectoryStructure(tree) {
-    const outputText = document.getElementById('outputText');
-    outputText.value = '';
-
     const directoryStructure = generateDirectoryStructure(tree);
-    outputText.value = directoryStructure;
+    const outputText = document.getElementById('directoryStructure');
+    outputText.innerHTML = directoryStructure;
 }
 
 // Function to generate directory structure recursively
@@ -313,11 +311,15 @@ function generateDirectoryStructure(tree, indent = 0) {
     let structure = '';
     tree.forEach(item => {
         const prefix = ' '.repeat(indent);
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.dataset.url = item.url;
+        checkbox.dataset.path = item.path;
         if (item.type === 'tree') {
-            structure += `${prefix}- ${item.path}/\n`;
+            structure += `${prefix}- <label for="${item.path}">${item.path}/</label>\n`;
             structure += generateDirectoryStructure(item.tree, indent + 2);
         } else {
-            structure += `${prefix}- ${item.path}\n`;
+            structure += `${prefix}- <label for="${item.path}">${item.path}</label>\n`;
         }
     });
     return structure;
